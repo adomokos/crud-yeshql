@@ -1,3 +1,4 @@
+{-#LANGUAGE TemplateHaskell #-}
 {-#LANGUAGE QuasiQuotes #-}
 
 module Main where
@@ -8,27 +9,33 @@ import Database.HDBC
 import Database.HDBC.MySQL
 
 [yesh|
-  -- name:getClientName :: (String)
-  -- :id :: Int
-  SELECT name FROM clients WHERE id = :id;
+    -- name:getClientName :: (String, String)
+    -- :id :: Int
+    SELECT name, subdomain FROM clients WHERE id = :id
+    ;;;
+    -- name:insertClient
+    -- :client_name :: String
+    INSERT INTO clients (name) VALUES (:client_name);
 |]
 
 getConn = do
     connectMySQL defaultMySQLConnectInfo {
         mysqlHost     = "localhost",
-        mysqlDatabase = "conduit_development",
+        mysqlDatabase = "conduit_test",
         mysqlUser     = "conduit_user",
         mysqlPassword = "pa$$word1",
         mysqlUnixSocket = "/tmp/mysql.sock"
     }
 
-
-main = do
+findClientData id = do
     conn <- getConn
-    clientName <- getClientName 1000002 conn
-    putStrLn $ case clientName of
-                Nothing -> "client not found"
-                Just name -> name
+    Just (clientName, subdomain) <- getClientName 3 conn
+    putStrLn clientName
+    putStrLn subdomain
+
+main = findClientData 3
+    {- insertClient "Test Client" conn -}
+    {- putStrLn "inserted" -}
 
 -- This worked
           {- rows <- quickQuery' conn "SELECT 1 + 1" [] -}

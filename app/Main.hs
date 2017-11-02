@@ -1,11 +1,12 @@
 {-#LANGUAGE QuasiQuotes #-}
 
+module Main where
+
 import Database.YeshQL
 import Control.Monad
 import Database.HDBC
 import Database.HDBC.MySQL
 
-{- module Main where -}
 [yesh|
   -- name:getClientName :: (String)
   -- :id :: Int

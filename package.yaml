@@ -1,0 +1,25 @@
+name: crud-yeshql
+version: 0.1.0.0
+author: Attila Domokos <adomokos@gmail.com>
+homepage: https://github.com/adomokos/crud-sqlite#readme
+
+ghc-options: -Wall
+
+dependencies:
+  - base >= 4.7 && < 5
+  - yeshql
+  - HDBC
+  - HDBC-mysql
+
+library:
+  source-dirs: src/
+  exposed-modules:
+    - Lib
+
+executables:
+  crud-yeshql-exe:
+    source-dirs: app/
+    main: Main.hs
+    dependencies:
+      crud-yeshql
+    ghc-options: -threaded -rtsopts -with-rtsopts=-N

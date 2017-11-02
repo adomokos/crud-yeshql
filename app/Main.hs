@@ -11,11 +11,14 @@ import Database.HDBC.MySQL
 [yesh|
     -- name:getClientName :: (String, String)
     -- :id :: Int
-    SELECT name, subdomain FROM clients WHERE id = :id
+    SELECT name, subdomain FROM clients WHERE id = :id;
     ;;;
-    -- name:insertClient
+    -- name:getClientCount :: (Int)
+    SELECT count(id) FROM clients;
+    ;;;
+    -- name:insertClient :: (Int)
     -- :client_name :: String
-    INSERT INTO clients (name) VALUES (:client_name);
+    INSERT INTO clients (name) VALUES (:client_name); SELECT last_insert_id();
 |]
 
 getConn = do
@@ -33,13 +36,23 @@ findClientData id = do
     putStrLn clientName
     putStrLn subdomain
 
-main = findClientData 3
-    {- insertClient "Test Client" conn -}
-    {- putStrLn "inserted" -}
+insertClientFn name = do
+    conn <- getConn
+    Just newId <- insertClient "Test Client" conn
+    putStrLn "inserted"
 
--- This worked
-          {- rows <- quickQuery' conn "SELECT 1 + 1" [] -}
-          {- forM_ rows $ \row -> putStrLn $ show row -}
+countClient = do
+    conn <- getConn
+    Just clientCount <- getClientCount conn
+    putStrLn $ "The number of client records is: " ++ show clientCount
+
+
+
+{- main = findClientData 3 -}
+main = do
+    insertClientFn "From yeshql"
+    countClient
+    return ()
 
 {- import Lib -}
 

@@ -27,9 +27,9 @@ import Database.HDBC.MySQL
 getConn = do
     connectMySQL defaultMySQLConnectInfo {
         mysqlHost     = "localhost",
-        mysqlDatabase = "conduit_test",
-        mysqlUser     = "conduit_user",
-        mysqlPassword = "pa$$word1",
+        mysqlDatabase = "crud_yeshql_test",
+        mysqlUser     = "crud_yeshql_user",
+        mysqlPassword = "ohB1Xe9x",
         mysqlUnixSocket = "/tmp/mysql.sock"
     }
 

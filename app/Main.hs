@@ -16,9 +16,12 @@ import Database.HDBC.MySQL
     -- name:getClientCount :: (Int)
     SELECT count(id) FROM clients;
     ;;;
-    -- name:insertClient :: (Int)
+    -- name:insertClient
     -- :client_name :: String
-    INSERT INTO clients (name) VALUES (:client_name); SELECT last_insert_id();
+    INSERT INTO clients (name) VALUES (:client_name);
+    ;;;
+    -- name:lastInsertedId :: (Int)
+    SELECT last_insert_id() as new_id;
 |]
 
 getConn = do
@@ -38,14 +41,16 @@ findClientData id = do
 
 insertClientFn name = do
     conn <- getConn
-    Just newId <- insertClient "Test Client" conn
-    putStrLn "inserted"
+    insertClient name conn
+    uid <- lastInsertedId conn
+    commit conn
+    disconnect conn
+    putStrLn $ "inserted id: " ++ show uid
 
 countClient = do
     conn <- getConn
     Just clientCount <- getClientCount conn
     putStrLn $ "The number of client records is: " ++ show clientCount
-
 
 
 {- main = findClientData 3 -}

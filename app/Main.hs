@@ -33,9 +33,17 @@ getConn = do
         mysqlUnixSocket = "/tmp/mysql.sock"
     }
 
+withConnection f = do
+    conn <- getConn
+    result <- f conn
+    commit conn
+    disconnect conn
+    return result
+
 findClientData id = do
     conn <- getConn
     Just (clientName, subdomain) <- getClientName 3 conn
+    disconnect conn
     putStrLn clientName
     putStrLn subdomain
 
@@ -48,10 +56,8 @@ insertClientFn name = do
     putStrLn $ "inserted id: " ++ show uid
 
 countClient = do
-    conn <- getConn
-    Just clientCount <- getClientCount conn
+    Just clientCount <- withConnection getClientCount
     putStrLn $ "The number of client records is: " ++ show clientCount
-
 
 {- main = findClientData 3 -}
 main = do

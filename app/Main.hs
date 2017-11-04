@@ -48,11 +48,10 @@ findClientData id = do
     putStrLn subdomain
 
 insertClientFn name = do
-    conn <- getConn
-    insertClient name conn
-    uid <- lastInsertedId conn
-    commit conn
-    disconnect conn
+    uid <- withConn (\conn -> do
+        insertClient name conn
+        lastInsertedId conn
+                    )
     putStrLn $ "inserted id: " ++ show uid
 
 countClient = do

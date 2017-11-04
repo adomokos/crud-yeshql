@@ -4,14 +4,13 @@
 module Main where
 
 import Database.YeshQL
-import Control.Monad
 import Database.HDBC
 import Database.HDBC.MySQL
 
 [yesh|
     -- name:getClientName :: (String, String)
-    -- :id :: Int
-    SELECT name, subdomain FROM clients WHERE id = :id;
+    -- :client_id :: Int
+    SELECT name, subdomain FROM clients WHERE id = :client_id;
     ;;;
     -- name:getClientCount :: (Int)
     SELECT count(id) FROM clients;
@@ -24,6 +23,7 @@ import Database.HDBC.MySQL
     SELECT last_insert_id() as new_id;
 |]
 
+getConn :: IO Connection
 getConn = do
     connectMySQL defaultMySQLConnectInfo {
         mysqlHost     = "localhost",
@@ -33,6 +33,7 @@ getConn = do
         mysqlUnixSocket = "/tmp/mysql.sock"
     }
 
+withConn :: (Connection -> IO b) -> IO b
 withConn f = do
     conn <- getConn
     result <- f conn
@@ -40,25 +41,28 @@ withConn f = do
     disconnect conn
     return result
 
-findClientData id = do
+findClientData :: Int -> IO ()
+findClientData clientId = do
     conn <- getConn
-    Just (clientName, subdomain) <- getClientName 3 conn
+    Just (clientName, subdomain) <- getClientName clientId conn
     disconnect conn
     putStrLn clientName
     putStrLn subdomain
 
+insertClientFn :: String -> IO ()
 insertClientFn name = do
     uid <- withConn (\conn -> do
-        insertClient name conn
-        lastInsertedId conn
-                    )
+        _ <- insertClient name conn
+        lastInsertedId conn)
     putStrLn $ "inserted id: " ++ show uid
 
+countClient :: IO ()
 countClient = do
     Just clientCount <- withConn getClientCount
     putStrLn $ "The number of client records is: " ++ show clientCount
 
 {- main = findClientData 3 -}
+main :: IO ()
 main = do
     insertClientFn "From yeshql"
     countClient
@@ -66,5 +70,4 @@ main = do
 
 {- import Lib -}
 
-{- main :: IO () -}
 {- main = someFunc -}

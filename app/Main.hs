@@ -43,9 +43,7 @@ withConn f = do
 
 findClientData :: Int -> IO ()
 findClientData clientId = do
-    conn <- getConn
-    Just (clientName, subdomain) <- getClientName clientId conn
-    disconnect conn
+    Just (clientName, subdomain) <- withConn $ getClientName clientId
     putStrLn clientName
     putStrLn subdomain
 

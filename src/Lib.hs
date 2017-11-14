@@ -13,14 +13,14 @@ import Database.HDBC
 import Database.HDBC.MySQL
 
 [yesh|
-    -- name:getClientName :: (String, String)
+    -- name:findClientNameSQL :: (String, String)
     -- :client_id :: Int
     SELECT name, subdomain FROM clients WHERE id = :client_id;
     ;;;
-    -- name:getClientCount :: (Int)
+    -- name:countClientSQL :: (Int)
     SELECT count(id) FROM clients;
     ;;;
-    -- name:insertClient
+    -- name:insertClientSQL
     -- :client_name :: String
     INSERT INTO clients (name) VALUES (:client_name);
     ;;;
@@ -48,18 +48,18 @@ withConn f = do
 
 findClientData :: Int -> IO ()
 findClientData clientId = do
-    Just (clientName, subdomain) <- withConn $ getClientName clientId
+    Just (clientName, subdomain) <- withConn $ findClientNameSQL clientId
     putStrLn clientName
     putStrLn subdomain
 
 insertClientFn :: String -> IO ()
 insertClientFn name = do
     uid <- withConn (\conn -> do
-        _ <- insertClient name conn
+        _ <- insertClientSQL name conn
         lastInsertedId conn)
     putStrLn $ "inserted id: " ++ show uid
 
 countClient :: IO ()
 countClient = do
-    Just clientCount <- withConn getClientCount
+    Just clientCount <- withConn countClientSQL
     putStrLn $ "The number of client records is: " ++ show clientCount

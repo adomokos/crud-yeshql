@@ -4,6 +4,7 @@
 module Lib
     (
     insertClient,
+    insertUser,
     countClient,
     findClientData
     ) where
@@ -24,6 +25,10 @@ import Database.HDBC.MySQL
     -- :client_name :: String
     -- :subdomain :: String
     INSERT INTO clients (name, subdomain) VALUES (:client_name, :subdomain);
+    ;;;
+    -- name:insertUserSQL
+    -- :login :: String
+    INSERT INTO users (client_id, login, email, password) VALUES (1, :login, 'john@gmail.com', 'password1');
     ;;;
     -- name:lastInsertedId :: (Int)
     SELECT last_insert_id() as new_id;
@@ -58,7 +63,14 @@ insertClient name subdomain = do
     uid <- withConn (\conn -> do
         _ <- insertClientSQL name subdomain conn
         lastInsertedId conn)
-    putStrLn $ "inserted id: " ++ show uid
+    putStrLn $ "inserted client id: " ++ show uid
+
+insertUser :: String -> IO ()
+insertUser login = do
+    uid <- withConn (\conn -> do
+        _ <- insertUserSQL login conn
+        lastInsertedId conn)
+    putStrLn $ "inserted user id: " ++ show uid
 
 countClient :: IO ()
 countClient = do

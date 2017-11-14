@@ -61,9 +61,14 @@ findClientData clientId = do
 insertClient :: String -> String -> IO ()
 insertClient name subdomain = do
     uid <- withConn (\conn -> do
-        _ <- insertClientSQL name subdomain conn
-        lastInsertedId conn)
+        insertClientWithConn name subdomain conn)
     putStrLn $ "inserted client id: " ++ show uid
+
+insertClientWithConn :: IConnection conn =>
+    String -> String -> conn -> IO (Maybe Int)
+insertClientWithConn name subdomain conn = do
+    _ <- insertClientSQL name subdomain conn
+    lastInsertedId conn
 
 insertUser :: String -> IO ()
 insertUser login = do

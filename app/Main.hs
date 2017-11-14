@@ -4,6 +4,6 @@ import qualified Lib as L
 
 main :: IO ()
 main = do
-    L.insertClientFn "From yeshql"
+    L.insertClient "From yeshql" "from-yeshql"
     L.countClient
     return ()

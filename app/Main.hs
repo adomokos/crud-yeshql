@@ -6,6 +6,6 @@ main :: IO ()
 main = do
     L.insertClient "From yeshql" "from-yeshql"
     L.insertUser "adomokos"
-    L.countClient
+    L.recordCount L.countClientSQL "client"
     L.countUser
     return ()

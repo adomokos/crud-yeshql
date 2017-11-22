@@ -5,8 +5,9 @@ module Lib
     (
     insertClient,
     insertUser,
-    countClient,
+    recordCount,
     countUser,
+    countClientSQL,
     findClientData
     ) where
 
@@ -81,12 +82,17 @@ insertUser login = do
         lastInsertedId conn)
     putStrLn $ "inserted user id: " ++ show uid
 
+{- recordCount :: (Connection -> IO (Maybe a0)) -> [Char] -> IO () -}
+recordCount fn subject = do
+    Just count <- withConn fn
+    putStrLn $ "Number of " ++ subject ++ "records:" ++ show count
+
 countClient :: IO ()
 countClient = do
     Just clientCount <- withConn countClientSQL
-    putStrLn $ "The number of client records is: " ++ show clientCount
+    putStrLn $ "Number of client records: " ++ show clientCount
 
 countUser :: IO ()
 countUser = do
     Just userCount <- withConn countUserSQL
-    putStrLn $ "The number of user records is: " ++ show userCount
+    putStrLn $ "Number of user records: " ++ show userCount

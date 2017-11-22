@@ -7,4 +7,5 @@ main = do
     L.insertClient "From yeshql" "from-yeshql"
     L.insertUser "adomokos"
     L.countClient
+    L.countUser
     return ()

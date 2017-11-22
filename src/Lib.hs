@@ -6,6 +6,7 @@ module Lib
     insertClient,
     insertUser,
     countClient,
+    countUser,
     findClientData
     ) where
 
@@ -29,6 +30,9 @@ import Database.HDBC.MySQL
     -- name:insertUserSQL
     -- :login :: String
     INSERT INTO users (client_id, login, email, password) VALUES (1, :login, 'john@gmail.com', 'password1');
+    ;;;
+    -- name:countUserSQL :: (Int)
+    SELECT count(id) FROM users;
     ;;;
     -- name:lastInsertedId :: (Int)
     SELECT last_insert_id() as new_id;
@@ -81,3 +85,8 @@ countClient :: IO ()
 countClient = do
     Just clientCount <- withConn countClientSQL
     putStrLn $ "The number of client records is: " ++ show clientCount
+
+countUser :: IO ()
+countUser = do
+    Just userCount <- withConn countUserSQL
+    putStrLn $ "The number of user records is: " ++ show userCount

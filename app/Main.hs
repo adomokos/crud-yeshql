@@ -9,6 +9,8 @@ main = do
     Just clientCount <- L.recordCount "client"
     Just userCount <- L.recordCount "user"
     reporter clientId userId clientCount userCount
+    Just (name, subdomain) <- L.findClientData clientId
+    putStrLn $ "The client name is: '" ++ name ++ "' and the subdomain is '" ++ subdomain ++ "'"
     return ()
 
 reporter :: Int -> Int -> Int -> Int -> IO()

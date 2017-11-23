@@ -14,7 +14,7 @@ import Database.HDBC
 import Database.HDBC.MySQL
 
 [yesh|
-    -- name:findClientNameSQL :: (String, String)
+    -- name:findClientInfoSQL :: (String, String)
     -- :client_id :: Int
     SELECT name, subdomain FROM clients WHERE id = :client_id;
     ;;;
@@ -55,16 +55,14 @@ withConn f = do
     disconnect conn
     return result
 
-findClientData :: Int -> IO ()
+findClientData :: Int -> IO (Maybe (String, String))
 findClientData clientId = do
-    Just (clientName, subdomain) <- withConn $ findClientNameSQL clientId
-    putStrLn clientName
-    putStrLn subdomain
+    withConn $ findClientInfoSQL clientId
 
 insertClient :: String -> String -> IO (Maybe Int)
 insertClient name subdomain = do
-    withConn (\conn -> do
-        insertClientWithConn name subdomain conn)
+    withConn (\conn ->
+        do insertClientWithConn name subdomain conn)
 
 insertClientWithConn :: IConnection conn => String -> String -> conn -> IO (Maybe Int)
 insertClientWithConn name subdomain conn = do

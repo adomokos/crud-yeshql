@@ -8,14 +8,14 @@ THIS_FILE := $(lastword $(MAKEFILE_LIST))
 .DEFAULT_GOAL := help
 
 create-db-user: ## Creates a DB user with the root MySQL user
-	mysql -u root --host $(HOST) -e "CREATE USER '$(DBUSER)'@'$(HOST)' IDENTIFIED BY '$(DBPASSWD)';"
-	mysql -u root --host $(HOST) -e "GRANT ALL PRIVILEGES ON `$(DBNAME)`.* TO '$(DBUSER)'@'$(HOST)';"
+	mysql -u root --host $(HOST) -e "CREATE USER '$(DBUSER)'@'$(HOST)' IDENTIFIED BY '$(DBPASSWD)';" > /dev/null 2>&1
+	mysql -u root --host $(HOST) -e "GRANT ALL PRIVILEGES ON `$(DBNAME)`.* TO '$(DBUSER)'@'$(HOST)';" > /dev/null 2>&1
 
 build-db: ## Builds the DB
 	@echo "Dropping and rebuilding database $(DBNAME)"
-	@mysql -u $(DBUSER) --password='$(DBPASSWD)' --host $(HOST) -e "DROP DATABASE IF EXISTS $(DBNAME);"
-	@mysql -u $(DBUSER) --password='$(DBPASSWD)' --host $(HOST) -e "CREATE DATABASE $(DBNAME);"
-	@mysql -u $(DBUSER) --password='$(DBPASSWD)' --host $(HOST) $(DBNAME) < resources/schema.sql
+	@mysql -u $(DBUSER) --password='$(DBPASSWD)' --host $(HOST) -e "DROP DATABASE IF EXISTS $(DBNAME);" > /dev/null 2>&1
+	@mysql -u $(DBUSER) --password='$(DBPASSWD)' --host $(HOST) -e "CREATE DATABASE $(DBNAME);" > /dev/null 2>&1
+	@mysql -u $(DBUSER) --password='$(DBPASSWD)' --host $(HOST) $(DBNAME) < resources/schema.sql > /dev/null 2>&1
 
 dbconnect: ## Connect to the DB with mysql console
 	mysql --user=$(DBUSER) --password='$(DBPASSWD)' --host=$(HOST) $(DBNAME)

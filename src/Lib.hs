@@ -61,30 +61,29 @@ findClientData clientId = do
     putStrLn clientName
     putStrLn subdomain
 
-insertClient :: String -> String -> IO ()
+insertClient :: String -> String -> IO (Maybe Int)
 insertClient name subdomain = do
     uid <- withConn (\conn -> do
         insertClientWithConn name subdomain conn)
-    putStrLn $ "inserted client id: " ++ show uid
+    return uid
 
 insertClientWithConn :: IConnection conn => String -> String -> conn -> IO (Maybe Int)
 insertClientWithConn name subdomain conn = do
     _ <- insertClientSQL name subdomain conn
     lastInsertedId conn
 
-insertUser :: String -> IO ()
+insertUser :: String -> IO (Maybe Int)
 insertUser login = do
     uid <- withConn (\conn -> do
         _ <- insertUserSQL login conn
         lastInsertedId conn)
-    putStrLn $ "inserted user id: " ++ show uid
+    return uid
 
 countFns :: IConnection conn => [Char] -> conn -> IO (Maybe Int)
 countFns "client" = countClientSQL
 countFns "user" = countUserSQL
 countFns subject = error $ "SQL fn for " ++ subject ++ " not found"
 
-recordCount :: [Char] -> IO ()
+recordCount :: [Char] -> IO (Maybe Int)
 recordCount subject = do
-    Just count <- withConn (countFns subject)
-    putStrLn $ "Number of " ++ subject ++ "records:" ++ show count
+    withConn (countFns subject)

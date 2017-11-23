@@ -4,12 +4,17 @@ import qualified Lib as L
 
 main :: IO ()
 main = do
-    Just newClientId <- L.insertClient "From yeshql" "from-yeshql"
-    putStrLn $ "The inserted client_id: " ++ show newClientId
-    Just newUserId <- L.insertUser "adomokos"
-    putStrLn $ "The inserted user_id: " ++ show newUserId
+    Just clientId <- L.insertClient "From yeshql" "from-yeshql"
+    Just userId <- L.insertUser "adomokos"
     Just clientCount <- L.recordCount "client"
-    putStrLn $ "Number of client records: " ++ show clientCount
     Just userCount <- L.recordCount "user"
-    putStrLn $ "Number of user records: " ++ show userCount
+    reporter clientId userId clientCount userCount
     return ()
+
+reporter :: Int -> Int -> Int -> Int -> IO()
+reporter clientId userId clientCount userCount = do
+    putStrLn $ "The inserted client_id: " ++ show clientId
+    putStrLn $ "The inserted user_id: " ++ show userId
+    putStrLn $ "Number of client records: " ++ show clientCount
+    putStrLn $ "Number of user records: " ++ show userCount
+

@@ -63,9 +63,8 @@ findClientData clientId = do
 
 insertClient :: String -> String -> IO (Maybe Int)
 insertClient name subdomain = do
-    uid <- withConn (\conn -> do
+    withConn (\conn -> do
         insertClientWithConn name subdomain conn)
-    return uid
 
 insertClientWithConn :: IConnection conn => String -> String -> conn -> IO (Maybe Int)
 insertClientWithConn name subdomain conn = do
@@ -74,11 +73,11 @@ insertClientWithConn name subdomain conn = do
 
 insertUser :: String -> IO (Maybe Int)
 insertUser login = do
-    uid <- withConn (\conn -> do
+    withConn (\conn -> do
         _ <- insertUserSQL login conn
         lastInsertedId conn)
-    return uid
 
+-- map subject to count functions
 countFns :: IConnection conn => [Char] -> conn -> IO (Maybe Int)
 countFns "client" = countClientSQL
 countFns "user" = countUserSQL

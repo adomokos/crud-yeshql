@@ -61,8 +61,7 @@ findClientData clientId = do
 
 insertClient :: String -> String -> IO (Maybe Int)
 insertClient name subdomain = do
-    withConn (\conn ->
-        do insertClientWithConn name subdomain conn)
+    withConn $ insertClientWithConn name subdomain
 
 insertClientWithConn :: IConnection conn => String -> String -> conn -> IO (Maybe Int)
 insertClientWithConn name subdomain conn = do
@@ -83,4 +82,4 @@ countFns subject = error $ "SQL fn for " ++ subject ++ " not found"
 
 recordCount :: [Char] -> IO (Maybe Int)
 recordCount subject = do
-    withConn (countFns subject)
+    withConn $ countFns subject

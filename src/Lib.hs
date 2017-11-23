@@ -67,8 +67,7 @@ insertClient name subdomain = do
         insertClientWithConn name subdomain conn)
     putStrLn $ "inserted client id: " ++ show uid
 
-insertClientWithConn :: IConnection conn =>
-    String -> String -> conn -> IO (Maybe Int)
+insertClientWithConn :: IConnection conn => String -> String -> conn -> IO (Maybe Int)
 insertClientWithConn name subdomain conn = do
     _ <- insertClientSQL name subdomain conn
     lastInsertedId conn
